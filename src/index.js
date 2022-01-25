@@ -7,12 +7,24 @@ app.use(express.json());
 
 const projects = [];
 
+function logRoutes(req, res, next) {
+  const { method, url } = req;
+
+  const route = `[${method.toUpperCase()}] ${url}`;
+
+  console.log(route);
+
+  return next();
+}
+
+app.use(logRoutes);
+
 app.get('/projects', (req, res) => {
   const { title } = req.query;
 
   const result = title ? projects.filter(project => project.title.includes(title)) : projects;
 
-  return res.json(result)
+  return res.json(result);
 })
 
 app.get('/projects/:id', (req, res) => {
@@ -45,7 +57,7 @@ app.post('/projects', (req, res) => {
 })
 
 app.put('/projects/:id', (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   const { title, owner } = req.body;
 
@@ -73,7 +85,7 @@ app.delete('/projects/:id', (req, res) => {
   const projectIndex = projects.findIndex(project => project.id == id);
 
   if (projectIndex < 0) {
-    return res.status(404).json({ error: 'Project not found' })
+    return res.status(404).json({ error: 'Project not found' });
   }
 
   projects.splice(projectIndex, 1);
